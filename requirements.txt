@@ -1,7 +1,9 @@
-streamlit
 opencv-python
 numpy
-joblib
 Pillow
-scikit-learn
+scikit-fuzzy
+matplotlib
+torch
+transformers
+
 
