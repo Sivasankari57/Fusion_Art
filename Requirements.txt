@@ -1,0 +1,1 @@
+pip install opencv-python matplotlib numpy torch torchvision transformers scikit-fuzzy
