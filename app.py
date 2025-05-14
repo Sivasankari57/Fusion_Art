@@ -29,8 +29,8 @@ fusion_simulator = ctrl.ControlSystemSimulation(fusion_ctrl)
 
 # ========== 2. Image Similarity ==========
 def compute_texture_similarity(img1, img2):
-    gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-    gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    gray1 = cv2.cvtColor(img1, cv2.COLOR_RGB2GRAY)
+    gray2 = cv2.cvtColor(img2, cv2.COLOR_RGB2GRAY)
     return 1 - np.mean(np.abs(gray1.astype(float) - gray2.astype(float)) / 255.0)
 
 def compute_color_similarity(img1, img2):
@@ -41,24 +41,19 @@ def fuzzy_fusion(tcp_img_path, ai_img_path, output_path='fused_output.jpg'):
     tcp = cv2.imread(tcp_img_path)
     ai = cv2.imread(ai_img_path)
 
-    # Resize both images to ensure they match in size
     tcp = cv2.resize(tcp, (256, 256))
     ai = cv2.resize(ai, (256, 256))
 
-    # Compute similarity values
     tex_sim = compute_texture_similarity(tcp, ai)
     col_sim = compute_color_similarity(tcp, ai)
 
-    # Input similarity values to the fuzzy controller
     fusion_simulator.input['texture_similarity'] = tex_sim
     fusion_simulator.input['color_similarity'] = col_sim
     fusion_simulator.compute()
 
-    # Get fusion weights
     tcp_weight = fusion_simulator.output['fusion_weight']
     ai_weight = 1 - tcp_weight
 
-    # Perform image fusion
     fused = cv2.addWeighted(tcp, tcp_weight, ai, ai_weight, 0)
     cv2.imwrite(output_path, fused)
     return output_path, tcp_weight, ai_weight
@@ -68,7 +63,6 @@ def semantic_analysis_blip(image_path):
     processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
     model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
 
-    # Open image and process it for BLIP model
     image = Image.open(image_path).convert('RGB')
     inputs = processor(image, return_tensors="pt")
     out = model.generate(**inputs)
@@ -80,22 +74,17 @@ if __name__ == "__main__":
     tcp_path = "input_images/tcp.jpg"
     ai_path = "input_images/ai.jpg"
 
-    # Perform fuzzy fusion
     fused_output_path, tcp_w, ai_w = fuzzy_fusion(tcp_path, ai_path)
 
-    # Perform semantic analysis on the fused image
     caption = semantic_analysis_blip(fused_output_path)
 
-    # Output results
     print("\n🖼️ Fused image saved to:", fused_output_path)
     print(f"🎨 Fusion Weights → TCP: {tcp_w:.2f}, AI: {ai_w:.2f}")
     print("🧠 Semantic Caption:", caption)
 
-    # Display fused image
     fused = cv2.imread(fused_output_path)
     fused_rgb = cv2.cvtColor(fused, cv2.COLOR_BGR2RGB)
 
-    # Plot the fused image with caption
     plt.imshow(fused_rgb)
     plt.title("Fused Image\n" + caption)
     plt.axis('off')
