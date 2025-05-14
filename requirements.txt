@@ -1,10 +1,11 @@
-opencv-python-headless
-numpy
-Pillow
-scikit-fuzzy
-matplotlib
-torch
-transformers
+opencv-python-headless     # For image processing without GUI errors
+numpy                      # Numerical operations
+Pillow                     # Image handling
+scikit-fuzzy               # Fuzzy logic (needs scipy)
+scipy                      # Required by scikit-fuzzy!
+matplotlib                 # Plotting
+torch                      # PyTorch for BLIP
+transformers               # For BLIP captioning
 
 
 
