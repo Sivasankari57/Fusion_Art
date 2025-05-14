@@ -1,9 +1,10 @@
-opencv-python           # Needed for cv2
-numpy                   # Numerical operations
-Pillow                  # Image handling for BLIP
-scikit-fuzzy            # Fuzzy logic
-matplotlib              # Display images
-torch                   # PyTorch for BLIP
-transformers            # Hugging Face BLIP model
+opencv-python-headless
+numpy
+Pillow
+scikit-fuzzy
+matplotlib
+torch
+transformers
+
 
 
